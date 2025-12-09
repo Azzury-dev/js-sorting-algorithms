@@ -1,54 +1,54 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
-    const algoSelect = document.getElementById("algoSelect");
-    const startBtn = document.getElementById("startBtn");
-
-    canvas.width = 900;
-    canvas.height = 350;
 
     function sleep(ms) {
         return new Promise(res => setTimeout(res, ms));
     }
 
-    function drawArray(arr, highlightA = -1, highlightB = -1) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    function draw(ctx, arr, highlightA = -1, highlightB = -1) {
+        const w = ctx.canvas.width;
+        const h = ctx.canvas.height;
 
-        const barWidth = canvas.width / arr.length;
-        const max = Math.max(...arr);
+        ctx.clearRect(0, 0, w, h);
+
+        const barWidth = w / arr.length;
+        const maxVal = Math.max(...arr);
 
         arr.forEach((value, index) => {
             ctx.fillStyle =
-                index === highlightA || index === highlightB
-                    ? "#45b5e9ff"
+                (index === highlightA || index === highlightB)
+                    ? "#e94560"
                     : "#14b8a6";
 
-            const barHeight = (value / max) * canvas.height;
+            const barHeight = (value / maxVal) * h;
 
             ctx.fillRect(
                 index * barWidth,
-                canvas.height - barHeight,
+                h - barHeight,
                 barWidth - 2,
                 barHeight
             );
         });
     }
 
+    function generateArray(n = 80) {
+        return Array.from({ length: n }, () => Math.floor(Math.random() * 300));
+    }
+
     /* ----------------- ALGORITHMS ----------------- */
 
-    async function bubbleSortVisual(arr) {
+    async function bubbleSortVisual(arr, ctx) {
         const a = [...arr];
         for (let i = 0; i < a.length; i++) {
             for (let j = 0; j < a.length - i - 1; j++) {
-                drawArray(a, j, j + 1);
+                draw(ctx, a, j, j + 1);
                 await sleep(5);
-                if (a[j] > a[j+1]) [a[j], a[j+1]] = [a[j+1], a[j]];
+                if (a[j] > a[j + 1]) [a[j], a[j + 1]] = [a[j + 1], a[j]];
             }
         }
-        drawArray(a);
+        draw(ctx, a);
     }
 
-    async function insertionSortVisual(arr) {
+    async function insertionSortVisual(arr, ctx) {
         const a = [...arr];
         for (let i = 1; i < a.length; i++) {
             let current = a[i];
@@ -57,32 +57,32 @@ document.addEventListener("DOMContentLoaded", () => {
             while (j >= 0 && a[j] > current) {
                 a[j + 1] = a[j];
                 j--;
-                drawArray(a, j, i);
+                draw(ctx, a, j, i);
                 await sleep(5);
             }
             a[j + 1] = current;
         }
-        drawArray(a);
+        draw(ctx, a);
     }
 
-    async function selectionSortVisual(arr) {
+    async function selectionSortVisual(arr, ctx) {
         const a = [...arr];
 
         for (let i = 0; i < a.length; i++) {
             let min = i;
 
             for (let j = i + 1; j < a.length; j++) {
-                drawArray(a, min, j);
+                draw(ctx, a, min, j);
                 await sleep(5);
                 if (a[j] < a[min]) min = j;
             }
 
             [a[i], a[min]] = [a[min], a[i]];
         }
-        drawArray(a);
+        draw(ctx, a);
     }
 
-    async function quickSortVisual(arr) {
+    async function quickSortVisual(arr, ctx) {
         const a = [...arr];
 
         async function qsort(left, right) {
@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (i <= j) {
                     [a[i], a[j]] = [a[j], a[i]];
-                    drawArray(a, i, j);
+                    draw(ctx, a, i, j);
                     await sleep(10);
                     i++; j--;
                 }
@@ -108,10 +108,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         await qsort(0, a.length - 1);
-        drawArray(a);
+        draw(ctx, a);
     }
 
-    async function mergeSortVisual(arr) {
+    async function mergeSortVisual(arr, ctx) {
         const a = [...arr];
 
         async function mergeSort(start, end) {
@@ -128,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             while (i < left.length && j < right.length) {
                 a[k++] = left[i] < right[j] ? left[i++] : right[j++];
-                drawArray(a, k, mid);
+                draw(ctx, a, k, mid);
                 await sleep(10);
             }
 
@@ -137,31 +137,59 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         await mergeSort(0, a.length);
-        drawArray(a);
+        draw(ctx, a);
     }
 
     /* ----------------- START FUNCTION ----------------- */
 
-    function generateArray(n = 80) {
-        return Array.from({length: n}, () => Math.floor(Math.random() * 300));
-    }
+    const algorithms = {
+        bubble: { name: "Bubble Sort", fn: bubbleSortVisual },
+        insertion: { name: "Insertion Sort", fn: insertionSortVisual },
+        selection: { name: "Selection Sort", fn: selectionSortVisual },
+        quick: { name: "Quick Sort", fn: quickSortVisual },
+        merge: { name: "Merge Sort", fn: mergeSortVisual }
+    };
 
-    async function start() {
-        const algo = algoSelect.value;
-        const array = generateArray();
+    document.getElementById("startBtn").addEventListener("click", async () => {
+        const checked = [...document.querySelectorAll("#algoList input:checked")];
 
-        const algorithms = {
-            bubble: bubbleSortVisual,
-            insertion: insertionSortVisual,
-            selection: selectionSortVisual,
-            quick: quickSortVisual,
-            merge: mergeSortVisual
-        };
+        if (checked.length === 0) {
+            alert("Choose at least one algorithm!");
+            return;
+        }
 
-        await algorithms[algo](array);
-    }
+        const arena = document.getElementById("arena");
+        arena.innerHTML = "";
 
-    startBtn.addEventListener("click", start);
+        const baseArray = generateArray();
 
-    window.start = start;
+        const tasks = [];
+
+        checked.forEach(cb => {
+            const algoId = cb.value;
+            const algo = algorithms[algoId];
+
+            const box = document.createElement("div");
+            box.className = "sortBox";
+
+            const canvas = document.createElement("canvas");
+            canvas.width = 900;
+            canvas.height = 350;
+            const ctx = canvas.getContext("2d");
+
+            const label = document.createElement("div");
+            label.className = "sortLabel";
+            label.textContent = algo.name;
+
+            box.appendChild(canvas);
+            box.appendChild(label);
+            arena.appendChild(box);
+
+            tasks.push(algo.fn([...baseArray], ctx));
+        });
+
+        await Promise.all(tasks);
+
+        console.log("🔥 All sorting finished!");
+    });
 });
