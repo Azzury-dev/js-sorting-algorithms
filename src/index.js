@@ -2,6 +2,7 @@
 export * from "./basic/bubble.js";
 
 // Advanced algorithms
+export * from "./basic/insertion.js"
 
 // Utils
 export * from "./utils/swap.js";

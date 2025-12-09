@@ -1,14 +1,16 @@
 import {
     bubbleSort,
+    insertionSort,
     generateArray
 } from "../src/index.js";
 
 const algorithms = {
     "Bubble Sort": bubbleSort,
+    "Insertion Sort": insertionSort,
 };
 
-const TEST_SIZE = 5000;
-const RUNS = 10;
+const TEST_SIZE = 1000;
+const RUNS = 1000;
 
 function benchmark(fn, arr) {
     const times = [];
