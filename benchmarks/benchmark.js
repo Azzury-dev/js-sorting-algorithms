@@ -3,7 +3,8 @@ import {
     bubbleSort,
     insertionSort,
     selectionSort,
-    quickSort
+    quickSort,
+    mergeSort,
 } from "../src/index.js";
 
 const algorithms = {
@@ -11,10 +12,11 @@ const algorithms = {
     "Insertion Sort": insertionSort,
     "Selection Sort": selectionSort,
     "Quick Sort": quickSort,
+    "Merge Sort": mergeSort
 };
 
-const TEST_SIZE = 1000;
-const RUNS = 1000;
+const TEST_SIZE = 10000;
+const RUNS = 50;
 
 function benchmark(fn, arr) {
     const times = [];

@@ -5,6 +5,7 @@ export * from "./basic/selection.js"
 
 // Advanced algorithms
 export * from "./advanced/quick.js";
+export * from "./advanced/merge.js";
 
 // Utils
 export * from "./utils/swap.js";
