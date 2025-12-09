@@ -1,12 +1,16 @@
 import {
+    generateArray,
     bubbleSort,
     insertionSort,
-    generateArray
+    selectionSort,
+    quickSort
 } from "../src/index.js";
 
 const algorithms = {
     "Bubble Sort": bubbleSort,
     "Insertion Sort": insertionSort,
+    "Selection Sort": selectionSort,
+    "Quick Sort": quickSort,
 };
 
 const TEST_SIZE = 1000;

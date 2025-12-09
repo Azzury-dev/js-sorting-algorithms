@@ -1,8 +1,10 @@
 // Basic algorithms
 export * from "./basic/bubble.js";
+export * from "./basic/insertion.js"
+export * from "./basic/selection.js"
 
 // Advanced algorithms
-export * from "./basic/insertion.js"
+export * from "./advanced/quick.js";
 
 // Utils
 export * from "./utils/swap.js";
