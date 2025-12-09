@@ -18,5 +18,8 @@
     "computer-science"
   ],
   "author": "Azzury",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "readline": "^1.3.0"
+  }
 }
