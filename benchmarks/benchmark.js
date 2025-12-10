@@ -15,8 +15,8 @@ const algorithms = {
     "Merge Sort": mergeSort
 };
 
-const TEST_SIZE = 5000;
-const RUNS = 5;
+const TEST_SIZE = 1000;
+const RUNS = 5000;
 
 const color = (txt, code) => `\x1b[${code}m${txt}\x1b[0m`;
 
